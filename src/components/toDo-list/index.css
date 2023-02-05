@@ -1,0 +1,16 @@
+.task-container {
+  background: yellow;
+  width: 90%;
+  height: 112px;
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 30px;
+}
+.label {
+  font-size: 20px;
+  align-self: center;
+}
+.input {
+  width: 30px;
+  height: 30px;
+}

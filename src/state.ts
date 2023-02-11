@@ -1,27 +1,29 @@
 export const state = {
   data: {
-    list: [],
+    tasks: [],
   },
-  listeners: [], // los callbacks
+
+  listeners: [],
+
   getState() {
     return this.data;
   },
-  setState(newState) {
+
+  setState(newState: Object) {
     this.data = newState;
     for (const cb of this.listeners) {
+      // Recorre las funciones de listeners y las ejecuta.
       cb();
     }
-    // modifica this.data (el state) e invoca los callbacks
   },
-  subscribe(callback: (any) => any) {
+  subscribe(callback: (any: any) => any) {
     this.listeners.push(callback);
-    // recibe callbacks para ser avisados posteriormente
   },
-  addItem(item) {
-    const cs = this.getState();
-    cs.list.push(item);
-    this.setState(cs);
 
-    // suma el nuevo item a la lista
+  addTask(task: object) {
+    const currentState = this.getState();
+    currentState.tasks.push(task);
+
+    this.setState(currentState);
   },
 };

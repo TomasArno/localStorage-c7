@@ -1,7 +1,5 @@
-import { welcome } from "./pages/welcome";
-import { state } from "./state";
-
+import { initHomepage } from "./pages";
+import "./components/list-item";
 (function main() {
-  const root = document.querySelector(".root");
-  welcome(root);
+  initHomepage();
 })();

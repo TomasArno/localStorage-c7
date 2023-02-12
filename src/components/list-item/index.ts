@@ -1,22 +1,21 @@
 customElements.define(
   "todo-item",
   class TodoItem extends HTMLElement {
-    shadow = this.attachShadow({ mode: "open" });
+    id;
+    title: string;
+    checked: boolean;
+    shadow: ShadowRoot;
     constructor() {
       super();
+      this.shadow = this.attachShadow({ mode: "open" });
     }
 
     connectedCallback() {
-      this.render();
-    }
-
-    render() {
-      const divEl = document.createElement("div") as HTMLElement;
       const style = document.createElement("style") as HTMLElement;
 
-      const title = this.getAttribute("title");
-      const check = this.getAttribute("check");
-      divEl.classList.add("container");
+      this.id = this.getAttribute("id");
+      this.title = this.getAttribute("title") || "-";
+      this.checked = JSON.parse(this.getAttribute("checked") as any);
 
       style.innerHTML = `
       * {
@@ -32,44 +31,74 @@ customElements.define(
         
         border-radius: 4.5px;
       }
-        
-        .p {
-          width: 260px;
-          position: relative;
-          top:15px;
-          left:15px; 
-          font-size: 30px;
-        }
-        
-        .input {
-          width: 30px;
-          height: 30px;
-          position: relative;
-          top:0px;
-          left:320px; 
-        }
-        
-        `;
+      
+      .p {
+        width: 260px;
+        position: relative;
+        top:15px;
+        left:15px; 
+        font-size: 25px;
+      }
+
+      .p.checked {
+        text-decoration: line-through;
+      }
+      
+      .input {
+        width: 30px;
+        height: 30px;
+        position: relative;
+        left:315px; 
+      }
+
+      .delete {
+        position: relative;
+        top:20px;
+        left:323px;
+        font-size:20px;
+      }
+      `;
+      this.shadow.appendChild(style);
+      this.render();
+    }
+
+    addCallbacks() {
+      const inputEl = this.shadow.querySelector(".input") as HTMLFormElement;
+      const deleteEl = this.shadow.querySelector(".delete") as HTMLElement;
+
+      inputEl.addEventListener("click", (e: any) => {
+        const isChecked = new CustomEvent("change", {
+          detail: {
+            id: this.id,
+            value: e.target.checked,
+          },
+        });
+        this.dispatchEvent(isChecked);
+      });
+
+      deleteEl.addEventListener("click", () => {
+        const taskDeleted = new CustomEvent("deleted", {
+          detail: {
+            id: this.id,
+          },
+        });
+        console.log("Deleted!!", taskDeleted);
+        this.dispatchEvent(taskDeleted);
+      });
+    }
+
+    render() {
+      const divEl = document.createElement("div") as HTMLElement;
+      divEl.classList.add("container");
 
       divEl.innerHTML = `
-        <p class="p">${title}</p>
-        <input class="input" type="checkbox" />
+        <p class="p ${this.checked ? "checked" : ""}">${this.title}</p>
+        <input class="input" type="checkbox" ${this.checked ? "checked" : ""}/>
+        <div class="delete">X</div>
         `;
 
-      const inputEl = divEl.querySelector(".input") as HTMLFormElement;
-
-      this.shadow.appendChild(style);
       this.shadow.appendChild(divEl);
+      this.addCallbacks();
     }
   }
 );
-
-// function throwEvent(inputEl) {
-//   const isChecked = new CustomEvent("checked", {
-//     detail: {
-//       check: "checked",
-//     },
-//   });
-
-//   inputEl.dispatchEvent(isChecked);
-// }

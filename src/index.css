@@ -1,0 +1,5 @@
+/* cambiar todo item de aca */
+
+.todo-item:hover {
+  border: 3px solid black;
+}
